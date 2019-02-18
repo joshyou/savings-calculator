@@ -1,39 +1,6 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import ReactDOM from 'react-dom';
-
-/*
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
-  }
-}
-
-export default App;*/
-
-/*
-user input - target, principal, amount, interest rate.
-
-prints number of years
-*/
 
 /*npm start to run*/
 
@@ -56,13 +23,6 @@ class Calculator extends React.Component {
                  periods: 0,
                  outputFrequency: 1};
     this.updateState = this.updateState.bind(this);
-
-    /*this.updateTarget = this.updateTarget.bind(this);
-    this.updateAmount = this.updateAmount.bind(this);
-    this.updateInterest = this.updateInterest.bind(this);
-    this.updateFrequency = this.updateFrequency.bind(this);
-    this.updateOutputFrequency = this.updateOutputFrequency.bind(this);*/
-    
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   
@@ -95,32 +55,6 @@ class Calculator extends React.Component {
     event.preventDefault();
   }
 
-  /*
-  updateTarget(event) {
-    this.setState({target: parseFloat(event.target.value)});
-    event.preventDefault();
-  }
-  
-  updateAmount(event) {
-    this.setState({amount: parseFloat(event.target.value)});
-    event.preventDefault();
-  }
-  
-  updateInterest(event) {
-    this.setState({interest: parseFloat(event.target.value)});
-    event.preventDefault();
-  }
-
-  updateFrequency(event) {
-    this.setState({frequency: parseFloat(event.target.value)});
-    event.preventDefault();
-  }
-
-  updateOutputFrequency(event) {
-    this.setState({outputFrequency: event.target.value});
-    event.preventDefault();
-  }*/
-
   //for now, updates whenever the dropdown is changed. could make it a state variable instead
   //of calculating directly in render()
   formatOutput(outputFrequency, frequency, periods) {
@@ -146,11 +80,10 @@ class Calculator extends React.Component {
         this.state.interest,
         this.state.frequency)});
     event.preventDefault();
-    //this.setState({})
+
   }
   
   render() {
-  //<input type="number" value={this.state.target} onChange={this.updateState.bind(this, "target")}/>
   return (<div>
       <h3>Savings Calculator</h3>
       
