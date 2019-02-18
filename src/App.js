@@ -48,24 +48,29 @@ this should happen before periodsToTarget is called
 class Calculator extends React.Component {
   constructor(props) {
     super(props);
-    this.state= {target: 100000, 
+    this.state = {target: 100000, 
                  amount: 1000, 
                  interest: 5, 
                  principal: 0,
                  frequency: 1,
-                 periods: 0};
-    this.updateTarget = this.updateTarget.bind(this);
+                 periods: 0,
+                 outputFrequency: 1};
+    this.updateState = this.updateState.bind(this);
+
+    /*this.updateTarget = this.updateTarget.bind(this);
     this.updateAmount = this.updateAmount.bind(this);
     this.updateInterest = this.updateInterest.bind(this);
     this.updateFrequency = this.updateFrequency.bind(this);
+    this.updateOutputFrequency = this.updateOutputFrequency.bind(this);*/
+    
     this.handleSubmit = this.handleSubmit.bind(this);
   }
   
   periodsToTarget(target, principal, amount, interest, frequency) {
     let total = principal;
     let periods = 0;
-    //amount = parseFloat(amount);
-    //alert('frequency:' + frequency)
+    
+    //for now, compounds at frequency equal to contribution frequency
     let percentInterest = 1 + 0.01*(interest/frequency);
     if (amount < 0) {
       return "not gonna happen bud!";
@@ -80,9 +85,17 @@ class Calculator extends React.Component {
  
     }
     //alert('final years:' + years)
-    return periods/frequency;
+    return periods
+
+    //return Math.round( (periods/frequency) * 10 ) / 10;
   }
   
+  updateState(param, event) {
+    this.setState({[param]: parseFloat(event.target.value)});
+    event.preventDefault();
+  }
+
+  /*
   updateTarget(event) {
     this.setState({target: parseFloat(event.target.value)});
     event.preventDefault();
@@ -94,7 +107,6 @@ class Calculator extends React.Component {
   }
   
   updateInterest(event) {
-   // percentInterest = 1 + 0.01*parseFloat(event.target.value)
     this.setState({interest: parseFloat(event.target.value)});
     event.preventDefault();
   }
@@ -103,53 +115,79 @@ class Calculator extends React.Component {
     this.setState({frequency: parseFloat(event.target.value)});
     event.preventDefault();
   }
+
+  updateOutputFrequency(event) {
+    this.setState({outputFrequency: event.target.value});
+    event.preventDefault();
+  }*/
+
+  //for now, updates whenever the dropdown is changed. could make it a state variable instead
+  //of calculating directly in render()
+  formatOutput(outputFrequency, frequency, periods) {
+    let output = '';
+    if (outputFrequency == 1) {
+      output += 'Years'
+    } else if (outputFrequency == 12) {
+      output += 'Months'
+    }
+    output += ' left until savings target: '
+    //return Math.round( (periods/frequency) * 10 ) / 10;
+    output += Math.round((periods/frequency)*outputFrequency*10) / 10;
+    return output;
+  }
   
   handleSubmit(event) {
     
-    //this.setState({years:0});
     this.setState({periods: 
       this.periodsToTarget(
         this.state.target, 
         this.state.principal, 
         this.state.amount, 
-        this.state.interest, 
+        this.state.interest,
         this.state.frequency)});
-    //alert('number of years' + this.state.years);
     event.preventDefault();
     //this.setState({})
   }
   
   render() {
-  
+  //<input type="number" value={this.state.target} onChange={this.updateState.bind(this, "target")}/>
   return (<div>
       <h3>Savings Calculator</h3>
       
       <form onSubmit = {this.handleSubmit}>
         <label>
           Savings target:&nbsp; 
-          <input type="number" value={this.state.target} onChange={this.updateTarget}/>
+          <input type="number" value={this.state.target} onChange={this.updateState.bind(this, "target")}/>
         </label>
         <p> </p>
         <label>
           Contribution:&nbsp; 
-          <input type="number" value={this.state.amount} onChange={this.updateAmount}/>
-          <select value = {this.state.frequency} onChange={this.updateFrequency}>
+          <input type="number" value={this.state.amount} onChange={this.updateState.bind(this, "amount")}/>
+          <select value = {this.state.frequency} onChange={this.updateState.bind(this, "frequency")}>
             <option value = {1}>annually</option>
             <option value = {12}>monthly</option>
-            <option value = {26}>bi-weekly</option>
+            <option value = {26}>biweekly</option>
             <option value = {52}>weekly</option>
           </select>
         </label>
         <p></p>
           <label>
           Interest rate (%):&nbsp; 
-          <input type="number" value={this.state.interest} onChange={this.updateInterest}/>
-        </label>
+          <input type="number" value={this.state.interest} onChange={this.updateState.bind(this, "interest")}/>
+          </label>
+        <p></p>
+          <label>
+          Time period:&nbsp; 
+          <select value = {this.state.outputFrequency} onChange={this.updateState.bind(this, "outputFrequency")}>
+            <option value = {1}>years</option>
+            <option value = {12}>months</option>
+          </select>
+          </label>
         <p></p>
         <input type="submit" value="Submit"/>
       </form>
       
-      <p>Years left to savings target: {this.state.periods}
+      <p>{this.formatOutput(this.state.outputFrequency, this.state.frequency, this.state.periods)}
       </p>
       </div>);
   }  
