@@ -43,11 +43,14 @@ class SavingsCalculator extends React.Component {
     this.setState({ show: nextProps.show });  
   }
   
+  //compute periods until savings target is reached. periods is years, months, 2-weeks, or weeks, based
+  //on selected contribution frequency. 
   periodsToTarget(target, principal, amount, interest, frequency) {
     let total = principal;
     let periods = 0;
     
-    //for now, compounds at frequency equal to contribution frequency
+    //divide interest rate by number of contribution periods per year
+    //this means that savings will compound at frequency equal to contribution frequency - should change this
     let percentInterest = 1 + 0.01*(interest/frequency);
     if (amount < 0) {
       return "not gonna happen bud!";
@@ -56,7 +59,7 @@ class SavingsCalculator extends React.Component {
       total += amount;
       total *= percentInterest;
       periods += 1;
-      if (periods > 10000) {
+      if (periods > 100000) {
         return "not gonna happen bud!";
       }
  
@@ -69,8 +72,7 @@ class SavingsCalculator extends React.Component {
     event.preventDefault();
   }
 
-  //for now, updates whenever the dropdown is changed. could make it a state variable instead
-  //of calculating directly in render()
+  //formats output to user, with time units specified by user
   formatOutput(outputFrequency, frequency, periods) {
     let output = '';
     if (outputFrequency == 1) {
@@ -79,7 +81,14 @@ class SavingsCalculator extends React.Component {
       output += 'Months'
     }
     output += ' left until savings target: '
-    output += Math.round((periods/frequency)*outputFrequency*10) / 10;
+
+    //round number of periods to first decimal place, and multiple by ratio between 
+    //number of output periods per year vs number of contribution periods per year
+    if (isNaN(periods)) {
+      output += periods;
+    } else {
+      output += Math.round(periods*(outputFrequency/frequency)*10) / 10;
+    }
     return output;
   }
   
@@ -93,7 +102,6 @@ class SavingsCalculator extends React.Component {
         this.state.interest,
         this.state.frequency)});
     event.preventDefault();
-
   }
   
   render() {
@@ -154,10 +162,15 @@ class LoanCalculator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      //balance: 1000
+      balance: 1000,
+      interest: 10,
+      payment: 0,
+      outputFrequency: 12,
+      periods: 0,
       show: props.show};
+
     this.updateState = this.updateState.bind(this);
-    //this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   //update this.state.show when parent state changes
@@ -170,21 +183,98 @@ class LoanCalculator extends React.Component {
     event.preventDefault();
   }
 
+  payoffTime(balance, interest, payment) {
+    //let total = balance;
+    let periods = 0;
+    let percentInterest = 1 + 0.01*(interest/12); //assume monthly payment and APY interest for now
+    if (payment <= 0) {
+      return "not gonna happen bud";
+    }
+    while (balance > 0) {
+      balance -= payment;
+      balance *= percentInterest;
+      if (periods > 10000) {
+        return "not gonna happen bud";
+      }
+      periods += 1;
+    }
+    //alert(periods);
+    return periods;
+  }
+
+  formatOutput(outputFrequency, periods) {
+    let output = '';
+    if (outputFrequency == 1) {
+      output += 'Years'
+    } else if (outputFrequency == 12) {
+      output += 'Months'
+    }
+    output += ' left until debt payoff: '
+
+    //round number of periods to first decimal place, and multiple by ratio between 
+    //number of output periods per year vs number of contribution periods per year
+    if (isNaN(periods)) {
+      output += periods;
+    } else {
+      output += Math.round(periods*(outputFrequency/12)*10) / 10;
+    }
+    return output;
+  }
+
+  handleSubmit(event) {
+    
+    this.setState({periods: 
+      this.payoffTime(
+        this.state.balance, 
+        this.state.interest,
+        this.state.payment)});
+    event.preventDefault();
+  }
+
   render() {
     if (this.state.show != 2) {
       return null;
     }
     return(
       <div>
-        <p>LOAN CALC</p>
+        <p></p>
+        <form onSubmit = {this.handleSubmit}>
+          <label>
+            Balance:&nbsp; 
+            <input type="number" value={this.state.balance} min = {0} onChange={this.updateState.bind(this, "balance")}/>
+          </label>
+          <p></p>
+          <label>
+            APY (%):&nbsp; 
+            <input type="number" step = "0.01" value={this.state.interest} min = {0} onChange={this.updateState.bind(this, "interest")}/>
+          </label>
+          <p></p>
+          <label>
+            Monthly payment:&nbsp; 
+            <input type="number" value={this.state.payment} min = {0} onChange={this.updateState.bind(this, "payment")}/>
+          </label>
+          <p></p>
+          <label>
+          Time period:&nbsp; 
+          <select value = {this.state.outputFrequency} onChange={this.updateState.bind(this, "outputFrequency")}>
+            <option value = {1}>years</option>
+            <option value = {12}>months</option>
+          </select>
+          </label>
+          <p></p>
+          <input type="submit" value="Submit"/>
+        </form>
+        <p>{this.formatOutput(this.state.outputFrequency, this.state.periods)}</p>
       </div>
     );
   }
 }
+
+//wrapper class that calls the two calculator types
 class Calculator extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {calculatorType: 1};
+    this.state = {calculatorType: 2};
     this.updateState = this.updateState.bind(this);
   }
 
