@@ -4,12 +4,7 @@ import ReactDOM from 'react-dom';
 
 /*npm start to run*/
 
-/* customization frequency: dropdown after contribution box:
-per year, per month, per week?
-
-interest rate is ambiguous. assume it's an annualized interest rate compounded based on period length?
-interest should get converted to period interest - e.g. if period is monthly then interest divided by 12
-this should happen before periodsToTarget is called
+/* 
 
 compounding options - right now it's compounded based on contribution frequency.
 this is arbitrary and not realistic.
@@ -49,15 +44,18 @@ class SavingsCalculator extends React.Component {
     let total = principal;
     let periods = 0;
     
-    //divide interest rate by number of contribution periods per year
-    //this means that savings will compound at frequency equal to contribution frequency - should change this
-    let percentInterest = 1 + 0.01*(interest/frequency);
+    //adjust interest rate based on frequency by taking it to the power of 1/frequency
+    //this ensures that savings grow at a rate equivalent to the inputted interest rate compounded annually
+    //e.g. if annual interest is 1.05, then monthly interest has to be 1.05^(1/12) so that compounding once per month
+    //leads to the same growth as compounding once per year at 1.05
+    interest = Math.pow(1 + 0.01*interest, 1/frequency);
+    
     if (amount < 0) {
       return "not gonna happen bud!";
     }
     while (total < target) {
       total += amount;
-      total *= percentInterest;
+      total *= interest;
       periods += 1;
       if (periods > 100000) {
         return "not gonna happen bud!";
@@ -153,10 +151,7 @@ class SavingsCalculator extends React.Component {
   }  
 }
 
-//design: loan balance
-//APY
-//compound period (default monthly)
-//(minimum) payment
+//inputs: loan balance, APR, compound period (default monthly), (minimum) payment
 //output - time until loan paid off. also interest paid?
 class LoanCalculator extends React.Component {
   constructor(props) {
@@ -183,16 +178,18 @@ class LoanCalculator extends React.Component {
     event.preventDefault();
   }
 
+  //it looks like credit card interest is usually reported as APR not APY. APR is just monthly interest * 12 (if it's monthly)
+  //APY takes into effect compounding. So just divide APR by 12 to get the monthly interest rate.
   payoffTime(balance, interest, payment) {
     //let total = balance;
     let periods = 0;
-    let percentInterest = 1 + 0.01*(interest/12); //assume monthly payment and APY interest for now
+    interest = 1 + 0.01*(interest/12); //assume monthly payment and APR interest for now
     if (payment <= 0) {
       return "not gonna happen bud";
     }
     while (balance > 0) {
       balance -= payment;
-      balance *= percentInterest;
+      balance *= interest;
       if (periods > 10000) {
         return "not gonna happen bud";
       }
@@ -245,7 +242,7 @@ class LoanCalculator extends React.Component {
           </label>
           <p></p>
           <label>
-            APY (%):&nbsp; 
+            APR (%):&nbsp; 
             <input type="number" step = "0.01" value={this.state.interest} min = {0} onChange={this.updateState.bind(this, "interest")}/>
           </label>
           <p></p>
