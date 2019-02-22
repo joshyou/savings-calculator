@@ -5,16 +5,11 @@ import ReactDOM from 'react-dom';
 /*npm start to run*/
 
 /* 
+two calculator options - time until savings target, time until loan is paid off
+Calculator wrapper class calls classes for both calculator types
 
-compounding options - right now it's compounded based on contribution frequency.
-this is arbitrary and not realistic.
-options - allow user to specify how often to compound
--always compound once per year, because interest rates are usually expressed
-as annualized
--compound daily or continuously, but calculate the interest rate to be equivalent 
-to compounding once per year at the inputted interest rate
-this is NOT equivalent to just dividing the interest rate by 365 and compounding daily
-as doing that leads to faster growth than compounding once per year
+to-do: snowball payment parameter. have to ask user for minimum payment, then
+calculate "snowballing" of extra payments' effect on interest if interest savings are reinvested in the loan
 */
 
 
