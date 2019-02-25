@@ -160,7 +160,8 @@ class SavingsCalculator extends React.Component {
           onChange={this.updateState.bind(this, "interest")}/>
           </label>
         <p></p>
-          <InputLabel htmlFor = "output-type">Time period: </InputLabel>
+          <label>
+          Time period:&nbsp;
           <Select 
             native
             value = {this.state.outputFrequency} 
@@ -169,7 +170,7 @@ class SavingsCalculator extends React.Component {
             <option value = {1}>years</option>
             <option value = {12}>months</option>
           </Select>
-          
+          </label>
         <p></p>
         <Button type="submit" variant="contained" color="primary">Submit</Button><p></p>
         </form>
@@ -273,28 +274,36 @@ class LoanCalculator extends React.Component {
         <form onSubmit = {this.handleSubmit}>
           <label>
             Balance:&nbsp; 
-            <input type="number" value={this.state.balance} min = {0} onChange={this.updateState.bind(this, "balance")}/>
+            <input type="number" value={this.state.balance} 
+            min = {0} 
+            onChange={this.updateState.bind(this, "balance")}/>
           </label>
           <p></p>
           <label>
             APR (%):&nbsp; 
-            <input type="number" step = "0.01" value={this.state.interest} min = {0} onChange={this.updateState.bind(this, "interest")}/>
+            <input type="number" step = "0.01" value={this.state.interest} 
+            min = {0}
+            onChange={this.updateState.bind(this, "interest")}/>
           </label>
           <p></p>
           <label>
             Monthly payment:&nbsp; 
-            <input type="number" value={this.state.payment} min = {0} onChange={this.updateState.bind(this, "payment")}/>
+            <input type="number" value={this.state.payment} 
+            min = {0} 
+            onChange={this.updateState.bind(this, "payment")}/>
           </label>
           <p></p>
-          <InputLabel htmlFor = "output-type">Time period: </InputLabel>
-          <Select 
-            native
-            value = {this.state.outputFrequency} 
-            onChange={this.updateState.bind(this, "outputFrequency")}
-            >
-            <option value = {1}>years</option>
-            <option value = {12}>months</option>
-          </Select>
+          <label>
+            Time period:&nbsp;
+            <Select 
+              native
+              value = {this.state.outputFrequency} 
+              onChange={this.updateState.bind(this, "outputFrequency")}
+              >
+              <option value = {1}>years</option>
+              <option value = {12}>months</option>
+            </Select>
+          </label>
           <p></p>
           <Button type="submit" variant="contained" color="primary">Submit</Button><p></p>
         </form>
@@ -321,7 +330,8 @@ class Calculator extends React.Component {
     return (
       <div>
         <h3>Savings Calculator</h3>
-        <InputLabel htmlFor = "calculator-type">Calculator Type </InputLabel>
+        <label>
+          Calculator type:&nbsp;
           <Select native 
           value = {this.state.calculatorType} 
           onChange={this.updateState.bind(this,"calculatorType")}
@@ -332,6 +342,7 @@ class Calculator extends React.Component {
             <option value = {1}>Time until savings target</option>
             <option value = {2}>Loan payment calculator</option>
           </Select>
+          </label>
         <p></p>
         <SavingsCalculator show={this.state.calculatorType}/>
         <LoanCalculator show={this.state.calculatorType}/>
@@ -344,7 +355,7 @@ ReactDOM.render(
   <Calculator />,
   document.getElementById('root')
 );
-
+/*
 const styles = theme => ({
   root: {
     display: 'flex',
@@ -357,6 +368,8 @@ const styles = theme => ({
   selectEmpty: {
     marginTop: theme.spacing.unit * 2,
   },
-});
+});*/
 
-export default withStyles(styles)(Calculator);
+//export default withStyles(styles)(Calculator);
+
+export default Calculator;
