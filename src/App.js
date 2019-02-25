@@ -1,6 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
 import ReactDOM from 'react-dom';
+import Button from '@material-ui/core/Button';
+import Select from '@material-ui/core/Select';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
+import FormControl from '@material-ui/core/FormControl';
+import { withStyles } from '@material-ui/core/styles';
 
 /*npm start to run*/
 
@@ -10,6 +17,11 @@ Calculator wrapper class calls classes for both calculator types
 
 to-do: snowball payment parameter. have to ask user for minimum payment, then
 calculate "snowballing" of extra payments' effect on interest if interest savings are reinvested in the loan
+
+Material-UI stuff:
+added button
+replace dropdowns with dialogs
+add table option to output
 */
 
 
@@ -113,15 +125,22 @@ class SavingsCalculator extends React.Component {
           <input type="number" value={this.state.principal} onChange={this.updateState.bind(this, "principal")}/>
           </label>
         <p></p>
+        
         <label>
           Contribution:&nbsp; 
           <input type="number" value={this.state.amount} min = {this.state.principal > 0 ? 0 : 1} onChange={this.updateState.bind(this, "amount")}/>
-          <select value = {this.state.frequency} onChange={this.updateState.bind(this, "frequency")}>
+          &nbsp;
+          <Select 
+            native
+            value = {this.state.frequency} 
+            onChange={this.updateState.bind(this, "frequency")}
+            >
             <option value = {1}>annually</option>
             <option value = {12}>monthly</option>
             <option value = {26}>biweekly</option>
             <option value = {52}>weekly</option>
-          </select>
+          </Select>
+          
         </label>
         <p></p>
           <label>
@@ -129,15 +148,18 @@ class SavingsCalculator extends React.Component {
           <input type="number" value={this.state.interest} min = {0} onChange={this.updateState.bind(this, "interest")}/>
           </label>
         <p></p>
-          <label>
-          Time period:&nbsp; 
-          <select value = {this.state.outputFrequency} onChange={this.updateState.bind(this, "outputFrequency")}>
+          <InputLabel htmlFor = "output-type">Time period: </InputLabel>
+          <Select 
+            native
+            value = {this.state.outputFrequency} 
+            onChange={this.updateState.bind(this, "outputFrequency")}
+            >
             <option value = {1}>years</option>
             <option value = {12}>months</option>
-          </select>
-          </label>
+          </Select>
+          
         <p></p>
-        <input type="submit" value="Submit"/>
+        <Button type="submit" variant="contained" color="primary">Submit</Button><p></p>
         </form>
       
       <p>{this.formatOutput(this.state.outputFrequency, this.state.frequency, this.state.periods)}
@@ -180,13 +202,13 @@ class LoanCalculator extends React.Component {
     let periods = 0;
     interest = 1 + 0.01*(interest/12); //assume monthly payment and APR interest for now
     if (payment <= 0) {
-      return "not gonna happen bud";
+      return "forever";
     }
     while (balance > 0) {
       balance -= payment;
       balance *= interest;
       if (periods > 10000) {
-        return "not gonna happen bud";
+        return "forever";
       }
       periods += 1;
     }
@@ -246,15 +268,17 @@ class LoanCalculator extends React.Component {
             <input type="number" value={this.state.payment} min = {0} onChange={this.updateState.bind(this, "payment")}/>
           </label>
           <p></p>
-          <label>
-          Time period:&nbsp; 
-          <select value = {this.state.outputFrequency} onChange={this.updateState.bind(this, "outputFrequency")}>
+          <InputLabel htmlFor = "output-type">Time period: </InputLabel>
+          <Select 
+            native
+            value = {this.state.outputFrequency} 
+            onChange={this.updateState.bind(this, "outputFrequency")}
+            >
             <option value = {1}>years</option>
             <option value = {12}>months</option>
-          </select>
-          </label>
+          </Select>
           <p></p>
-          <input type="submit" value="Submit"/>
+          <Button type="submit" variant="contained" color="primary">Submit</Button><p></p>
         </form>
         <p>{this.formatOutput(this.state.outputFrequency, this.state.periods)}</p>
       </div>
@@ -279,13 +303,17 @@ class Calculator extends React.Component {
     return (
       <div>
         <h3>Savings Calculator</h3>
-        <label>
-          Calculator Type:&nbsp;
-          <select value = {this.state.calculatorType} onChange={this.updateState.bind(this,"calculatorType")}>
+        <InputLabel htmlFor = "calculator-type">Calculator Type </InputLabel>
+          <Select native 
+          value = {this.state.calculatorType} 
+          onChange={this.updateState.bind(this,"calculatorType")}
+          inputProps={{
+            name: 'Calculator Type',
+            id: 'calculator-type',
+          }}>
             <option value = {1}>Time until savings target</option>
             <option value = {2}>Loan payment calculator</option>
-          </select>
-        </label>
+          </Select>
         <p></p>
         <SavingsCalculator show={this.state.calculatorType}/>
         <LoanCalculator show={this.state.calculatorType}/>
@@ -296,8 +324,21 @@ class Calculator extends React.Component {
 
 ReactDOM.render(
   <Calculator />,
-  //formatName(user),
   document.getElementById('root')
 );
 
-export default Calculator;
+const styles = theme => ({
+  root: {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  formControl: {
+    margin: theme.spacing.unit,
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing.unit * 2,
+  },
+});
+
+export default withStyles(styles)(Calculator);
