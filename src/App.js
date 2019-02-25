@@ -9,8 +9,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { withStyles } from '@material-ui/core/styles';
 
-/*npm start to run*/
-
 /* 
 two calculator options - time until savings target, time until loan is paid off
 Calculator wrapper class calls classes for both calculator types
@@ -35,6 +33,7 @@ class SavingsCalculator extends React.Component {
                  frequency: 1,
                  periods: 0,
                  outputFrequency: 1,
+                 output: '',
                  show: props.show};
     this.updateState = this.updateState.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,6 +47,7 @@ class SavingsCalculator extends React.Component {
   //compute periods until savings target is reached. periods is years, months, 2-weeks, or weeks, based
   //on selected contribution frequency. 
   periodsToTarget(target, principal, amount, interest, frequency) {
+    //alert("frequency" + frequency);
     let total = principal;
     let periods = 0;
     
@@ -79,6 +79,7 @@ class SavingsCalculator extends React.Component {
 
   //formats output to user, with time units specified by user
   formatOutput(outputFrequency, frequency, periods) {
+    
     let output = '';
     if (outputFrequency == 1) {
       output += 'Years'
@@ -98,14 +99,21 @@ class SavingsCalculator extends React.Component {
   }
   
   handleSubmit(event) {
+    let new_periods = this.periodsToTarget(
+      this.state.target, 
+      this.state.principal, 
+      this.state.amount, 
+      this.state.interest,
+      this.state.frequency);
     
-    this.setState({periods: 
-      this.periodsToTarget(
-        this.state.target, 
-        this.state.principal, 
-        this.state.amount, 
-        this.state.interest,
-        this.state.frequency)});
+    let new_output = this.formatOutput(
+      this.state.outputFrequency, 
+      this.state.frequency, 
+      new_periods
+    );
+
+    this.setState({periods:new_periods, output: new_output});
+
     event.preventDefault();
   }
   
@@ -113,7 +121,8 @@ class SavingsCalculator extends React.Component {
     if (this.state.show != 1) {
       return null;
     }
-    return (<div>
+    return (
+    <div>
       <form onSubmit = {this.handleSubmit}>
         <label>
           Savings target:&nbsp; 
@@ -128,7 +137,9 @@ class SavingsCalculator extends React.Component {
         
         <label>
           Contribution:&nbsp; 
-          <input type="number" value={this.state.amount} min = {this.state.principal > 0 ? 0 : 1} onChange={this.updateState.bind(this, "amount")}/>
+          <input type="number" value={this.state.amount} 
+          min = {this.state.principal > 0 ? 0 : 1} 
+          onChange={this.updateState.bind(this, "amount")}/>
           &nbsp;
           <Select 
             native
@@ -145,7 +156,8 @@ class SavingsCalculator extends React.Component {
         <p></p>
           <label>
           Interest rate (%):&nbsp; 
-          <input type="number" value={this.state.interest} min = {0} onChange={this.updateState.bind(this, "interest")}/>
+          <input type="number" value={this.state.interest} min = {0} 
+          onChange={this.updateState.bind(this, "interest")}/>
           </label>
         <p></p>
           <InputLabel htmlFor = "output-type">Time period: </InputLabel>
@@ -162,9 +174,11 @@ class SavingsCalculator extends React.Component {
         <Button type="submit" variant="contained" color="primary">Submit</Button><p></p>
         </form>
       
-      <p>{this.formatOutput(this.state.outputFrequency, this.state.frequency, this.state.periods)}
+      <p>
+      {this.state.output}
+      
       </p>
-      </div>);
+    </div>);
   }  
 }
 
@@ -179,6 +193,7 @@ class LoanCalculator extends React.Component {
       payment: 0,
       outputFrequency: 12,
       periods: 0,
+      output: '',
       show: props.show};
 
     this.updateState = this.updateState.bind(this);
@@ -236,12 +251,15 @@ class LoanCalculator extends React.Component {
   }
 
   handleSubmit(event) {
-    
-    this.setState({periods: 
-      this.payoffTime(
-        this.state.balance, 
-        this.state.interest,
-        this.state.payment)});
+    let new_periods = this.payoffTime(
+      this.state.balance, 
+      this.state.interest,
+      this.state.payment);
+    let new_output = this.formatOutput(
+      this.state.outputFrequency, 
+      new_periods
+    );
+    this.setState({periods:new_periods, output: new_output});
     event.preventDefault();
   }
 
@@ -280,7 +298,7 @@ class LoanCalculator extends React.Component {
           <p></p>
           <Button type="submit" variant="contained" color="primary">Submit</Button><p></p>
         </form>
-        <p>{this.formatOutput(this.state.outputFrequency, this.state.periods)}</p>
+        <p>{this.state.output}</p>
       </div>
     );
   }
@@ -290,7 +308,7 @@ class LoanCalculator extends React.Component {
 class Calculator extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {calculatorType: 2};
+    this.state = {calculatorType: 1};
     this.updateState = this.updateState.bind(this);
   }
 
