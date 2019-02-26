@@ -126,21 +126,24 @@ class SavingsCalculator extends React.Component {
     <div>
       <form onSubmit = {this.handleSubmit}>
         <label>
-          Savings target:&nbsp; 
-          <input type="number" value={this.state.target} min = {0} onChange={this.updateState.bind(this, "target")}/>
+          Savings target: $&nbsp;
+          <input type="number" value={this.state.target} min = {0} onChange={this.updateState.bind(this, "target")}
+          style={{width:'100px'}}/>
         </label>
         <p> </p>
         <label>
-          Principal:&nbsp; 
-          <input type="number" value={this.state.principal} onChange={this.updateState.bind(this, "principal")}/>
+          Principal: $&nbsp;
+          <input type="number" value={this.state.principal} onChange={this.updateState.bind(this, "principal")}
+          style={{width:'80px'}}/>
           </label>
         <p></p>
         
         <label>
-          Contribution:&nbsp; 
+          Contribution: $&nbsp;
           <input type="number" value={this.state.amount} 
           min = {this.state.principal > 0 ? 0 : 1} 
-          onChange={this.updateState.bind(this, "amount")}/>
+          onChange={this.updateState.bind(this, "amount")}
+          style={{width:'70px'}}/>
           &nbsp;
           <Select 
             native
@@ -156,9 +159,12 @@ class SavingsCalculator extends React.Component {
         </label>
         <p></p>
           <label>
-          Interest rate (%):&nbsp; 
+          Interest rate:&nbsp; 
           <input type="number" value={this.state.interest} min = {0} 
-          onChange={this.updateState.bind(this, "interest")}/>
+          onChange={this.updateState.bind(this, "interest")}
+          style={{width:'30px'}}
+          />
+          &nbsp;%
           </label>
         <p></p>
           <FormControl>
@@ -176,7 +182,7 @@ class SavingsCalculator extends React.Component {
         <Button type="submit" variant="contained" color="primary">Calculate</Button><p></p>
         </form>
       
-      <p>
+      <p class="output">
       {this.state.output}
       
       </p>
@@ -190,9 +196,9 @@ class LoanCalculator extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      balance: 1000,
+      balance: 10000,
       interest: 10,
-      payment: 0,
+      payment: 25,
       outputFrequency: 12,
       periods: 0,
       output: '',
@@ -274,26 +280,31 @@ class LoanCalculator extends React.Component {
         <p></p>
         <form onSubmit = {this.handleSubmit}>
           <label>
-            Balance:&nbsp; 
+            Balance: $&nbsp; 
             <input type="number" value={this.state.balance} 
             min = {0} 
-            onChange={this.updateState.bind(this, "balance")}/>
+            onChange={this.updateState.bind(this, "balance")}
+            style={{width:'80px'}}/>
           </label>
           <p></p>
           <label>
-            APR (%):&nbsp; 
-            <input type="number" step = "0.01" value={this.state.interest} 
-            min = {0}
-            onChange={this.updateState.bind(this, "interest")}/>
-          </label>
-          <p></p>
-          <label>
-            Monthly payment:&nbsp; 
+            Monthly payment: $&nbsp; 
             <input type="number" value={this.state.payment} 
             min = {0} 
-            onChange={this.updateState.bind(this, "payment")}/>
+            onChange={this.updateState.bind(this, "payment")}
+            style={{width:'60px'}}/>
           </label>
           <p></p>
+          <label>
+            APR:&nbsp; 
+            <input type="number" step = "0.01" value={this.state.interest} 
+            min = {0}
+            onChange={this.updateState.bind(this, "interest")}
+            style={{width:'37px'}}/>
+          </label>
+          &nbsp;%
+          <p></p>
+          
           <FormControl>
             <InputLabel>Time period</InputLabel>
             <Select 
@@ -308,7 +319,7 @@ class LoanCalculator extends React.Component {
           <p></p>
           <Button type="submit" variant="contained" color="primary">Calculate</Button><p></p>
         </form>
-        <p>{this.state.output}</p>
+        <p class="output">{this.state.output}</p>
       </div>
     );
   }
