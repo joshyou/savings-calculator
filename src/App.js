@@ -3,11 +3,12 @@ import './App.css';
 import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
-import NativeSelect from '@material-ui/core/NativeSelect';
-import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { withStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 
 /* 
 two calculator options - time until savings target, time until loan is paid off
@@ -160,19 +161,19 @@ class SavingsCalculator extends React.Component {
           onChange={this.updateState.bind(this, "interest")}/>
           </label>
         <p></p>
-          <label>
-          Time period:&nbsp;
-          <Select 
-            native
-            value = {this.state.outputFrequency} 
-            onChange={this.updateState.bind(this, "outputFrequency")}
-            >
-            <option value = {1}>years</option>
-            <option value = {12}>months</option>
-          </Select>
-          </label>
+          <FormControl>
+            <InputLabel>Time period</InputLabel>
+            <Select 
+              native
+              value = {this.state.outputFrequency} 
+              onChange={this.updateState.bind(this, "outputFrequency")}
+              >
+              <option value = {1}>years</option>
+              <option value = {12}>months</option>
+            </Select>
+          </FormControl>
         <p></p>
-        <Button type="submit" variant="contained" color="primary">Submit</Button><p></p>
+        <Button type="submit" variant="contained" color="primary">Calculate</Button><p></p>
         </form>
       
       <p>
@@ -293,8 +294,8 @@ class LoanCalculator extends React.Component {
             onChange={this.updateState.bind(this, "payment")}/>
           </label>
           <p></p>
-          <label>
-            Time period:&nbsp;
+          <FormControl>
+            <InputLabel>Time period</InputLabel>
             <Select 
               native
               value = {this.state.outputFrequency} 
@@ -303,9 +304,9 @@ class LoanCalculator extends React.Component {
               <option value = {1}>years</option>
               <option value = {12}>months</option>
             </Select>
-          </label>
+          </FormControl>
           <p></p>
-          <Button type="submit" variant="contained" color="primary">Submit</Button><p></p>
+          <Button type="submit" variant="contained" color="primary">Calculate</Button><p></p>
         </form>
         <p>{this.state.output}</p>
       </div>
@@ -327,27 +328,37 @@ class Calculator extends React.Component {
   }
 
   render() {
+
     return (
-      <div>
-        <h3>Savings Calculator</h3>
-        <label>
-          Calculator type:&nbsp;
-          <Select native 
-          value = {this.state.calculatorType} 
-          onChange={this.updateState.bind(this,"calculatorType")}
-          inputProps={{
-            name: 'Calculator Type',
-            id: 'calculator-type',
-          }}>
-            <option value = {1}>Time until savings target</option>
-            <option value = {2}>Loan payment calculator</option>
-          </Select>
-          </label>
-        <p></p>
-        <SavingsCalculator show={this.state.calculatorType}/>
-        <LoanCalculator show={this.state.calculatorType}/>
-        
-      </div>);
+      <Card style={{
+        width: '60%',
+        maxWidth: 450,
+        margin: 'auto',
+        padding: '30px',
+        backgroundColor: '#eff0f4',
+      }}>
+        <CardActions>
+        <div>
+          <h3>Savings Calculator</h3>
+          <FormControl>
+          <InputLabel>Calculator Type</InputLabel>
+            <Select native 
+            value = {this.state.calculatorType} 
+            onChange={this.updateState.bind(this,"calculatorType")}
+            inputProps={{
+              name: 'Calculator Type',
+              id: 'calculator-type',
+            }}>
+              <option value = {1}>Time until savings target</option>
+              <option value = {2}>Loan payment calculator</option>
+            </Select>
+          </FormControl>
+          <p></p>
+          <SavingsCalculator show={this.state.calculatorType}/>
+          <LoanCalculator show={this.state.calculatorType}/>
+        </div>
+        </CardActions>
+      </Card>);
   }
 }
 
@@ -355,18 +366,27 @@ ReactDOM.render(
   <Calculator />,
   document.getElementById('root')
 );
-/*
-const styles = theme => ({
-  root: {
+
+/*const styles = theme => ({
+  card: {
+    maxWidth: 400,
+  },
+  media: {
+    height: 0,
+    paddingTop: '56.25%', // 16:9
+  },
+  actions: {
     display: 'flex',
-    flexWrap: 'wrap',
   },
-  formControl: {
-    margin: theme.spacing.unit,
-    minWidth: 120,
+  expand: {
+    transform: 'rotate(0deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+    }),
   },
-  selectEmpty: {
-    marginTop: theme.spacing.unit * 2,
+  expandOpen: {
+    transform: 'rotate(180deg)',
   },
 });*/
 
