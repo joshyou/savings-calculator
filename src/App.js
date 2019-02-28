@@ -8,7 +8,16 @@ import FormControl from '@material-ui/core/FormControl';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
-import CardContent from '@material-ui/core/CardContent';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import ExpansionPanel from '@material-ui/core/ExpansionPanel';
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
+//run npm install @material-ui/icons first
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 /* 
 two calculator options - time until savings target, time until loan is paid off
@@ -32,7 +41,7 @@ class SavingsCalculator extends React.Component {
                  interest: 5, 
                  principal: 1000,
                  frequency: 1,
-                 periods: 0,
+                 periods: {first:-1, second: -1, third: -1, fourth: -1},
                  outputFrequency: 1,
                  output: '',
                  show: props.show};
@@ -51,6 +60,8 @@ class SavingsCalculator extends React.Component {
     //alert("frequency" + frequency);
     let total = principal;
     let periods = 0;
+    let quartiles = [0.25*target, 0.5*target, 0.75*target, target]
+    let output = {first:-1, second:-1, third:-1, fourth:-1}
     
     //adjust interest rate based on frequency by taking it to the power of 1/frequency
     //this ensures that savings grow at a rate equivalent to the inputted interest rate compounded annually
@@ -64,13 +75,24 @@ class SavingsCalculator extends React.Component {
     while (total < target) {
       total += amount;
       total *= interest;
+      if ((total > quartiles[0]) && (output.first == -1)) {
+        output.first = periods;
+      }
+      if ((total > quartiles[1]) && (output.second == -1)) {
+        output.second = periods;
+      }
+      if ((total > quartiles[2]) && (output.third == -1)) {
+        output.third = periods;
+      }
+      
       periods += 1;
       if (periods > 100000) {
         return "not gonna happen bud!";
       }
  
     }
-    return periods
+    output.fourth = periods;
+    return output
   }
   
   updateState(param, event) {
@@ -110,7 +132,7 @@ class SavingsCalculator extends React.Component {
     let new_output = this.formatOutput(
       this.state.outputFrequency, 
       this.state.frequency, 
-      new_periods
+      new_periods.fourth
     );
 
     this.setState({periods:new_periods, output: new_output});
@@ -186,6 +208,30 @@ class SavingsCalculator extends React.Component {
       {this.state.output}
       
       </p>
+      <ExpansionPanel>
+    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        Detailed results</ExpansionPanelSummary>
+        <ExpansionPanelDetails>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Percentage of target</TableCell>
+                <TableCell>25%</TableCell>
+                <TableCell align="right">50%</TableCell>
+                <TableCell align="right">75%</TableCell>
+                <TableCell align="right">100%</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableCell>Time left</TableCell>
+              <TableCell>{this.state.periods.first}</TableCell>
+              <TableCell>{this.state.periods.second}</TableCell>
+              <TableCell>{this.state.periods.third}</TableCell>
+              <TableCell>{this.state.periods.fourth}</TableCell>
+            </TableBody>
+          </Table>
+        </ExpansionPanelDetails>
+      </ExpansionPanel>
     </div>);
   }  
 }
@@ -343,7 +389,7 @@ class Calculator extends React.Component {
     return (
       <Card style={{
         width: '60%',
-        maxWidth: 450,
+        maxWidth: 650,
         margin: 'auto',
         padding: '30px',
         backgroundColor: '#eff0f4',
