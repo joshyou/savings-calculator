@@ -28,8 +28,10 @@ calculate "snowballing" of extra payments' effect on interest if interest saving
 
 Material-UI stuff:
 added button
-replace dropdowns with dialogs
+replace dropdowns with Material-style dropdowns
 add table option to output
+
+conditionally hide table before calculation (separate class would work)
 */
 
 
@@ -56,12 +58,14 @@ class SavingsCalculator extends React.Component {
   
   //compute periods until savings target is reached. periods is years, months, 2-weeks, or weeks, based
   //on selected contribution frequency. 
-  periodsToTarget(target, principal, amount, interest, frequency) {
+  periodsToTarget(target, principal, amount, interest, frequency, outputFrequency) {
     //alert("frequency" + frequency);
+
     let total = principal;
     let periods = 0;
+    //intermediate targets for 25% of target, 50%, etc.
     let quartiles = [0.25*target, 0.5*target, 0.75*target, target]
-    let output = {first:-1, second:-1, third:-1, fourth:-1}
+    let results = {first:-1, second:-1, third:-1, fourth:-1}
     
     //adjust interest rate based on frequency by taking it to the power of 1/frequency
     //this ensures that savings grow at a rate equivalent to the inputted interest rate compounded annually
@@ -75,24 +79,25 @@ class SavingsCalculator extends React.Component {
     while (total < target) {
       total += amount;
       total *= interest;
-      if ((total > quartiles[0]) && (output.first == -1)) {
-        output.first = periods;
-      }
-      if ((total > quartiles[1]) && (output.second == -1)) {
-        output.second = periods;
-      }
-      if ((total > quartiles[2]) && (output.third == -1)) {
-        output.third = periods;
-      }
-      
       periods += 1;
+
+      //determine whether running total has exceeded each quartile
+      if ((total > quartiles[0]) && (results.first == -1)) {
+        results.first = Math.round(periods*(outputFrequency/frequency)*10) / 10;
+      }
+      if ((total > quartiles[1]) && (results.second == -1)) {
+        results.second = Math.round(periods*(outputFrequency/frequency)*10) / 10;
+      }
+      if ((total > quartiles[2]) && (results.third == -1)) {
+        results.third = Math.round(periods*(outputFrequency/frequency)*10) / 10;
+      }
       if (periods > 100000) {
         return "not gonna happen bud!";
       }
  
     }
-    output.fourth = periods;
-    return output
+    results.fourth = Math.round(periods*(outputFrequency/frequency)*10) / 10;
+    return results
   }
   
   updateState(param, event) {
@@ -116,7 +121,7 @@ class SavingsCalculator extends React.Component {
     if (isNaN(periods)) {
       output += periods;
     } else {
-      output += Math.round(periods*(outputFrequency/frequency)*10) / 10;
+      output += periods;//Math.round(periods*(outputFrequency/frequency)*10) / 10;
     }
     return output;
   }
@@ -127,7 +132,8 @@ class SavingsCalculator extends React.Component {
       this.state.principal, 
       this.state.amount, 
       this.state.interest,
-      this.state.frequency);
+      this.state.frequency,
+      this.state.outputFrequency);
     
     let new_output = this.formatOutput(
       this.state.outputFrequency, 
@@ -208,10 +214,23 @@ class SavingsCalculator extends React.Component {
       {this.state.output}
       
       </p>
-      <ExpansionPanel>
-    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-        Detailed results</ExpansionPanelSummary>
-        <ExpansionPanelDetails>
+      <TabularResults periods = {this.state.periods}
+      output = {this.state.output}/>
+    </div>);
+  }  
+}
+
+//returns savings target results as a table
+function TabularResults(props) {
+  //hide table unless output has been generated
+  if (props.output == '') {
+    return null;
+  }
+  return(
+    <ExpansionPanel>
+      <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+      Detailed results</ExpansionPanelSummary>
+      <ExpansionPanelDetails>
           <Table>
             <TableHead>
               <TableRow>
@@ -224,16 +243,15 @@ class SavingsCalculator extends React.Component {
             </TableHead>
             <TableBody>
               <TableCell>Time left</TableCell>
-              <TableCell>{this.state.periods.first}</TableCell>
-              <TableCell>{this.state.periods.second}</TableCell>
-              <TableCell>{this.state.periods.third}</TableCell>
-              <TableCell>{this.state.periods.fourth}</TableCell>
+              <TableCell>{props.periods.first}</TableCell>
+              <TableCell>{props.periods.second}</TableCell>
+              <TableCell>{props.periods.third}</TableCell>
+              <TableCell>{props.periods.fourth}</TableCell>
             </TableBody>
           </Table>
-        </ExpansionPanelDetails>
-      </ExpansionPanel>
-    </div>);
-  }  
+      </ExpansionPanelDetails>
+    </ExpansionPanel>
+  )
 }
 
 //inputs: loan balance, APR, compound period (default monthly), (minimum) payment
