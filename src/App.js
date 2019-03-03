@@ -16,8 +16,8 @@ import TableRow from '@material-ui/core/TableRow';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-//run npm install @material-ui/icons first
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import firebase from './config.js';
 
 /* 
 two calculator options - time until savings target, time until loan is paid off
@@ -127,6 +127,8 @@ class SavingsCalculator extends React.Component {
   }
   
   handleSubmit(event) {
+    
+
     let new_periods = this.periodsToTarget(
       this.state.target, 
       this.state.principal, 
@@ -141,9 +143,34 @@ class SavingsCalculator extends React.Component {
       new_periods.fourth
     );
 
+    firebase.database().ref('account/Jim').set({
+      balance:2001
+    });
+
+    /*
+    var playersRef = firebase.database().ref("account/");
+
+    playersRef.set ({
+      Jim: {
+          balance:2001
+      },
+      
+      Kim: {
+          balance:1001
+      }
+    });
+    const itemsRef = firebase.database().ref('items');
+    const item = {
+      title: 'salad',
+      user: 'jim'
+    }*/
+    //playersRef.push(item);
+    
     this.setState({periods:new_periods, output: new_output});
 
     event.preventDefault();
+    
+    
   }
   
   render() {
@@ -158,7 +185,7 @@ class SavingsCalculator extends React.Component {
           <input type="number" value={this.state.target} min = {0} onChange={this.updateState.bind(this, "target")}
           style={{width:'100px'}}/>
         </label>
-        <p> </p>
+        <p></p>
         <label>
           Principal: $&nbsp;
           <input type="number" value={this.state.principal} onChange={this.updateState.bind(this, "principal")}
@@ -210,10 +237,7 @@ class SavingsCalculator extends React.Component {
         <Button type="submit" variant="contained" color="primary">Calculate</Button><p></p>
         </form>
       
-      <p class="output">
-      {this.state.output}
-      
-      </p>
+      <p class="output">{this.state.output} </p>
       <TabularResults periods = {this.state.periods}
       output = {this.state.output}/>
     </div>);
@@ -231,7 +255,14 @@ function TabularResults(props) {
       <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
       Detailed results</ExpansionPanelSummary>
       <ExpansionPanelDetails>
-          <Table>
+          <Table style={{tableLayout:'auto'}}>
+            <colgroup>
+            <col style={{width:'60%'}}/>
+            <col style={{width:'10%'}}/>
+            <col style={{width:'10%'}}/>
+            <col style={{width:'10%'}}/>
+            <col style={{width:'10%'}}/>
+            </colgroup>
             <TableHead>
               <TableRow>
                 <TableCell>Percentage of target</TableCell>
@@ -406,11 +437,12 @@ class Calculator extends React.Component {
 
     return (
       <Card style={{
-        width: '60%',
-        maxWidth: 650,
+        width: '50%',
+        maxWidth: 600,
         margin: 'auto',
-        padding: '30px',
+        padding: '25px',
         backgroundColor: '#eff0f4',
+        overflowX: 'auto'
       }}>
         <CardActions>
         <div>

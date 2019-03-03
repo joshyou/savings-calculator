@@ -1,10 +1,11 @@
 {
-  "name": "my-app",
+  "name": "firebase-test",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
+    "firebase": "^5.8.5",
     "material-design-icons": "^3.0.1",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
@@ -24,5 +25,18 @@
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "description": "Savings calculator",
+  "main": "index.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/joshyou/savings-calculator.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joshyou/savings-calculator/issues"
+  },
+  "homepage": "https://github.com/joshyou/savings-calculator#readme"
 }
