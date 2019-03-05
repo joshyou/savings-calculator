@@ -17,7 +17,7 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import firebase from './config.js';
+import firebase from './firebase.js';
 
 /* 
 two calculator options - time until savings target, time until loan is paid off
@@ -144,7 +144,7 @@ class SavingsCalculator extends React.Component {
     );
 
     firebase.database().ref('account/Jim').set({
-      balance:2001
+      balance:42069
     });
 
     /*
