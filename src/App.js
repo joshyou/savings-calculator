@@ -143,28 +143,14 @@ class SavingsCalculator extends React.Component {
       new_periods.fourth
     );
 
-    firebase.database().ref('account/Jim').set({
-      balance:42069
+    /*firebase.database().ref('account/Jim').set({
+      balance:10010
+    });*/
+
+    firebase.database().ref('account/Jim').once('value', function(data) {
+      alert(data.val().balance)
     });
 
-    /*
-    var playersRef = firebase.database().ref("account/");
-
-    playersRef.set ({
-      Jim: {
-          balance:2001
-      },
-      
-      Kim: {
-          balance:1001
-      }
-    });
-    const itemsRef = firebase.database().ref('items');
-    const item = {
-      title: 'salad',
-      user: 'jim'
-    }*/
-    //playersRef.push(item);
     
     this.setState({periods:new_periods, output: new_output});
 
