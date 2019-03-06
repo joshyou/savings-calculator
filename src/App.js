@@ -41,7 +41,7 @@ class SavingsCalculator extends React.Component {
     this.state = {target: 100000, 
                  amount: 1000, 
                  interest: 5, 
-                 principal: 1000,
+                 principal: 0,
                  frequency: 1,
                  periods: {first:-1, second: -1, third: -1, fourth: -1},
                  outputFrequency: 1,
@@ -49,6 +49,7 @@ class SavingsCalculator extends React.Component {
                  show: props.show};
     this.updateState = this.updateState.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    
   }
 
   //update this.state.show when parent state changes
@@ -82,13 +83,13 @@ class SavingsCalculator extends React.Component {
       periods += 1;
 
       //determine whether running total has exceeded each quartile
-      if ((total > quartiles[0]) && (results.first == -1)) {
+      if ((total > quartiles[0]) && (results.first === -1)) {
         results.first = Math.round(periods*(outputFrequency/frequency)*10) / 10;
       }
-      if ((total > quartiles[1]) && (results.second == -1)) {
+      if ((total > quartiles[1]) && (results.second === -1)) {
         results.second = Math.round(periods*(outputFrequency/frequency)*10) / 10;
       }
-      if ((total > quartiles[2]) && (results.third == -1)) {
+      if ((total > quartiles[2]) && (results.third === -1)) {
         results.third = Math.round(periods*(outputFrequency/frequency)*10) / 10;
       }
       if (periods > 100000) {
@@ -109,9 +110,9 @@ class SavingsCalculator extends React.Component {
   formatOutput(outputFrequency, frequency, periods) {
     
     let output = '';
-    if (outputFrequency == 1) {
+    if (outputFrequency === 1) {
       output += 'Years'
-    } else if (outputFrequency == 12) {
+    } else if (outputFrequency === 12) {
       output += 'Months'
     }
     output += ' left until savings target: '
@@ -143,13 +144,16 @@ class SavingsCalculator extends React.Component {
       new_periods.fourth
     );
 
-    /*firebase.database().ref('account/Jim').set({
+    /*
+    test code for setting and reading firebase values
+
+    firebase.database().ref('account/Jim').set({
       balance:10010
-    });*/
+    });
 
     firebase.database().ref('account/Jim').once('value', function(data) {
-      alert(data.val().balance)
-    });
+      alert("balance" + data.val().balance)
+    });*/
 
     
     this.setState({periods:new_periods, output: new_output});
@@ -159,8 +163,18 @@ class SavingsCalculator extends React.Component {
     
   }
   
+  componentDidMount() {
+    var firebalance = 0;
+    firebase.database().ref('account/Jim').once('value', (data) => {
+      //alert(data.val().balance)
+      firebalance = data.val().balance;
+      this.setState({principal: firebalance});
+    });
+    //alert('firebalance ' + firebalance);
+    
+  }
   render() {
-    if (this.state.show != 1) {
+    if (this.state.show !== 1) {
       return null;
     }
     return (
@@ -233,7 +247,7 @@ class SavingsCalculator extends React.Component {
 //returns savings target results as a table
 function TabularResults(props) {
   //hide table unless output has been generated
-  if (props.output == '') {
+  if (props.output === '') {
     return null;
   }
   return(
@@ -322,9 +336,9 @@ class LoanCalculator extends React.Component {
 
   formatOutput(outputFrequency, periods) {
     let output = '';
-    if (outputFrequency == 1) {
+    if (outputFrequency === 1) {
       output += 'Years'
-    } else if (outputFrequency == 12) {
+    } else if (outputFrequency === 12) {
       output += 'Months'
     }
     output += ' left until debt payoff: '
@@ -353,7 +367,7 @@ class LoanCalculator extends React.Component {
   }
 
   render() {
-    if (this.state.show != 2) {
+    if (this.state.show !== 2) {
       return null;
     }
     return(
@@ -423,10 +437,10 @@ class Calculator extends React.Component {
 
     return (
       <Card style={{
-        width: '50%',
-        maxWidth: 600,
+        width: '55%',
+        maxWidth: 700,
         margin: 'auto',
-        padding: '25px',
+        padding: '20px',
         backgroundColor: '#eff0f4',
         overflowX: 'auto'
       }}>
