@@ -438,7 +438,7 @@ class Calculator extends React.Component {
     return (
       <Card style={{
         width: '55%',
-        maxWidth: 700,
+        maxWidth: this.state.calculatorType === 1 ? 650:500,
         margin: 'auto',
         padding: '20px',
         backgroundColor: '#eff0f4',
