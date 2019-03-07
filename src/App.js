@@ -128,8 +128,6 @@ class SavingsCalculator extends React.Component {
   }
   
   handleSubmit(event) {
-    
-
     let new_periods = this.periodsToTarget(
       this.state.target, 
       this.state.principal, 
@@ -154,24 +152,16 @@ class SavingsCalculator extends React.Component {
     firebase.database().ref('account/Jim').once('value', function(data) {
       alert("balance" + data.val().balance)
     });*/
-
-    
     this.setState({periods:new_periods, output: new_output});
-
-    event.preventDefault();
-    
-    
+    event.preventDefault();  
   }
   
   componentDidMount() {
-    var firebalance = 0;
     firebase.database().ref('account/Jim').once('value', (data) => {
-      //alert(data.val().balance)
-      firebalance = data.val().balance;
-      this.setState({principal: firebalance});
-    });
-    //alert('firebalance ' + firebalance);
-    
+      this.setState({principal: data.val().balance,
+                    target: data.val().target,
+                    interest: data.val().interest});
+    });    
   }
   render() {
     if (this.state.show !== 1) {
@@ -215,9 +205,9 @@ class SavingsCalculator extends React.Component {
         <p></p>
           <label>
           Interest rate:&nbsp; 
-          <input type="number" value={this.state.interest} min = {0} 
+          <input type="number" step = "0.01" value={this.state.interest} min = {0} 
           onChange={this.updateState.bind(this, "interest")}
-          style={{width:'30px'}}
+          style={{width:'40px'}}
           />
           &nbsp;%
           </label>
@@ -293,7 +283,9 @@ class LoanCalculator extends React.Component {
     this.state = {
       balance: 10000,
       interest: 10,
-      payment: 25,
+      payment: 250,
+      minpayment: 25,
+      snowball: true,
       outputFrequency: 12,
       periods: 0,
       output: '',
@@ -312,18 +304,31 @@ class LoanCalculator extends React.Component {
     this.setState({[param]: parseFloat(event.target.value)});
     event.preventDefault();
   }
+  //same as UpdateState, but don't parse float
+  updateCheck(event) {
+    this.setState({snowball: !this.state.snowball});
+    event.preventDefault();
+  }
 
   //it looks like credit card interest is usually reported as APR not APY. APR is just monthly interest * 12 (if it's monthly)
   //APY takes into effect compounding. So just divide APR by 12 to get the monthly interest rate.
-  payoffTime(balance, interest, payment) {
-    //let total = balance;
+  payoffTime(balance, interest, payment, minpayment, snowball) {
+    //alert(snowball);
     let periods = 0;
     interest = 1 + 0.01*(interest/12); //assume monthly payment and APR interest for now
     if (payment <= 0) {
       return "forever";
     }
+    //track cumulative payments in excess of minimum payments
+    let excess = 0;
     while (balance > 0) {
+      excess += (payment - minpayment);
       balance -= payment;
+      if (snowball) {
+        //subtract interest savings from excess payments
+        balance -= ((interest - 1) * excess);
+      }
+      
       balance *= interest;
       if (periods > 10000) {
         return "forever";
@@ -357,7 +362,10 @@ class LoanCalculator extends React.Component {
     let new_periods = this.payoffTime(
       this.state.balance, 
       this.state.interest,
-      this.state.payment);
+      this.state.payment,
+      this.state.minpayment,
+      this.state.snowball);
+
     let new_output = this.formatOutput(
       this.state.outputFrequency, 
       new_periods
@@ -388,6 +396,20 @@ class LoanCalculator extends React.Component {
             min = {0} 
             onChange={this.updateState.bind(this, "payment")}
             style={{width:'60px'}}/>
+          </label>
+          <p></p>
+          <label>
+            Minimum payment: $&nbsp; 
+            <input type="number" value={this.state.minpayment} 
+            min = {0} 
+            onChange={this.updateState.bind(this, "minpayment")}
+            style={{width:'60px'}}/>
+          </label>
+          <label>
+            &nbsp;Snowball&nbsp; 
+            <input type="checkbox" checked={this.state.snowball} 
+            onChange={this.updateCheck.bind(this)}
+            />
           </label>
           <p></p>
           <label>
