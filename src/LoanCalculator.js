@@ -5,6 +5,7 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import firebase from './firebase.js';
+import FormatOutput from './FormatOutput.js';
 
 //inputs: loan balance, APR, compound period (default monthly), (minimum) payment
 //output - time until loan paid off. also interest paid?
@@ -18,7 +19,7 @@ class LoanCalculator extends React.Component {
         minpayment: 25,
         snowball: true,
         outputFrequency: 12,
-        periods: 0,
+        periods: -1,
         output: ''};
   
       this.updateState = this.updateState.bind(this);
@@ -37,7 +38,7 @@ class LoanCalculator extends React.Component {
   
     //it looks like credit card interest is usually reported as APR not APY. APR is just monthly interest * 12 (if it's monthly)
     //APY takes into effect compounding. So just divide APR by 12 to get the monthly interest rate.
-    payoffTime(balance, interest, payment, minpayment, snowball) {
+    payoffTime(balance, interest, payment, minpayment, snowball, outputFrequency) {
       //alert(snowball);
       let periods = 0;
       interest = 1 + 0.01*(interest/12); //assume monthly payment and APR interest for now
@@ -61,10 +62,10 @@ class LoanCalculator extends React.Component {
         periods += 1;
       }
       //alert(periods);
-      return periods;
+      return Math.round(periods*(outputFrequency/12)*10) / 10;
     }
   
-    formatOutput(outputFrequency, periods) {
+    /*formatOutput(outputFrequency, periods) {
       let output = '';
       if (outputFrequency === 1) {
         output += 'Years'
@@ -81,7 +82,7 @@ class LoanCalculator extends React.Component {
         output += Math.round(periods*(outputFrequency/12)*10) / 10;
       }
       return output;
-    }
+    }*/
   
     handleSubmit(event) {
       let new_periods = this.payoffTime(
@@ -89,12 +90,15 @@ class LoanCalculator extends React.Component {
         this.state.interest,
         this.state.payment,
         this.state.minpayment,
-        this.state.snowball);
-  
-      let new_output = this.formatOutput(
+        this.state.snowball,
+        this.state.outputFrequency);
+
+      let new_output = FormatOutput({outputFrequency: this.state.outputFrequency, periods: new_periods})
+
+      /*let new_output = this.formatOutput(
         this.state.outputFrequency, 
         new_periods
-      );
+      );*/
       this.setState({periods:new_periods, output: new_output});
       event.preventDefault();
     }

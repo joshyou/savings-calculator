@@ -18,18 +18,19 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import firebase from './firebase.js';
+import FormatOutput from './FormatOutput.js';
 
 class TargetCalculator extends React.Component {
     constructor(props) {
       super(props);
       this.state = {target: 100000, 
-                   amount: 1000, 
-                   interest: 5, 
-                   principal: 0,
-                   frequency: 1,
-                   periods: {first:-1, second: -1, third: -1, fourth: -1},
-                   outputFrequency: 1,
-                   output: ''};
+                  amount: 1000, 
+                  interest: 5, 
+                  principal: 0,
+                  frequency: 1,
+                  periods: {first:-1, second: -1, third: -1, fourth: -1},
+                  outputFrequency: 1,
+                  output: ''};
       this.updateState = this.updateState.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
       
@@ -58,7 +59,7 @@ class TargetCalculator extends React.Component {
       interest = Math.pow(1 + 0.01*interest, 1/frequency);
       
       if (amount < 0) {
-        return "not gonna happen bud!";
+        return "forever";
       }
       while (total < target) {
         total += amount;
@@ -67,6 +68,8 @@ class TargetCalculator extends React.Component {
   
         //determine whether running total has exceeded each quartile
         if ((total > quartiles[0]) && (results.first === -1)) {
+          //round number of periods to first decimal place, and multiple by ratio between 
+          //number of output periods per year and number of contribution periods per year
           results.first = Math.round(periods*(outputFrequency/frequency)*10) / 10;
         }
         if ((total > quartiles[1]) && (results.second === -1)) {
@@ -76,7 +79,7 @@ class TargetCalculator extends React.Component {
           results.third = Math.round(periods*(outputFrequency/frequency)*10) / 10;
         }
         if (periods > 100000) {
-          return "not gonna happen bud!";
+          return "forever";
         }
    
       }
@@ -89,8 +92,8 @@ class TargetCalculator extends React.Component {
       event.preventDefault();
     }
   
-    //formats output to user, with time units specified by user
-    formatOutput(outputFrequency, frequency, periods) {
+    /* moved to own function
+    formatOutput(outputFrequency, periods) {
       
       let output = '';
       if (outputFrequency === 1) {
@@ -100,15 +103,14 @@ class TargetCalculator extends React.Component {
       }
       output += ' left until savings target: '
   
-      //round number of periods to first decimal place, and multiple by ratio between 
-      //number of output periods per year vs number of contribution periods per year
+      
       if (isNaN(periods)) {
         output += periods;
       } else {
         output += periods;//Math.round(periods*(outputFrequency/frequency)*10) / 10;
       }
       return output;
-    }
+    }*/
     
     handleSubmit(event) {
       let new_periods = this.periodsToTarget(
@@ -118,13 +120,7 @@ class TargetCalculator extends React.Component {
         this.state.interest,
         this.state.frequency,
         this.state.outputFrequency);
-      
-      let new_output = this.formatOutput(
-        this.state.outputFrequency, 
-        this.state.frequency, 
-        new_periods.fourth
-      );
-  
+    
       /*
       test code for setting and reading firebase values
   
@@ -135,6 +131,8 @@ class TargetCalculator extends React.Component {
       firebase.database().ref('account/Jim').once('value', function(data) {
         alert("balance" + data.val().balance)
       });*/
+      
+      let new_output = FormatOutput({outputFrequency: this.state.outputFrequency, periods: new_periods.fourth})
       this.setState({periods:new_periods, output: new_output});
       event.preventDefault();  
     }
@@ -207,17 +205,19 @@ class TargetCalculator extends React.Component {
           <Button type="submit" variant="contained" color="primary">Calculate</Button><p></p>
           </form>
         
-        <p class="output">{this.state.output} </p>
-        <TabularResults periods = {this.state.periods}
-        output = {this.state.output}/>
+        <p class="output">
+        {this.state.output}
+        </p>
+        <TabularResults periods = {this.state.periods}/>
       </div>);
     }  
   }
+
   
   //returns savings target results as a table
   function TabularResults(props) {
-    //hide table unless output has been generated
-    if (props.output === '') {
+    //hide table unless periods hav ebeen calculated
+    if (props.periods.first === -1) {
       return null;
     }
     return(

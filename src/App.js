@@ -19,7 +19,7 @@ Calculator wrapper class calls classes for both calculator types */
 class Calculator extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {calculatorType: 1};
+    this.state = {calculatorType: 2};
     this.updateState = this.updateState.bind(this);
   }
 
