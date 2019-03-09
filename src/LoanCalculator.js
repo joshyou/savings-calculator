@@ -65,25 +65,6 @@ class LoanCalculator extends React.Component {
       return Math.round(periods*(outputFrequency/12)*10) / 10;
     }
   
-    /*formatOutput(outputFrequency, periods) {
-      let output = '';
-      if (outputFrequency === 1) {
-        output += 'Years'
-      } else if (outputFrequency === 12) {
-        output += 'Months'
-      }
-      output += ' left until debt payoff: '
-  
-      //round number of periods to first decimal place, and multiple by ratio between 
-      //number of output periods per year vs number of contribution periods per year
-      if (isNaN(periods)) {
-        output += periods;
-      } else {
-        output += Math.round(periods*(outputFrequency/12)*10) / 10;
-      }
-      return output;
-    }*/
-  
     handleSubmit(event) {
       let new_periods = this.payoffTime(
         this.state.balance, 
@@ -93,12 +74,11 @@ class LoanCalculator extends React.Component {
         this.state.snowball,
         this.state.outputFrequency);
 
-      let new_output = FormatOutput({outputFrequency: this.state.outputFrequency, periods: new_periods})
+      let new_output = FormatOutput(
+        {outputFrequency: this.state.outputFrequency, 
+        periods: new_periods, 
+        calculatorType: 2})
 
-      /*let new_output = this.formatOutput(
-        this.state.outputFrequency, 
-        new_periods
-      );*/
       this.setState({periods:new_periods, output: new_output});
       event.preventDefault();
     }

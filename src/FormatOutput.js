@@ -9,8 +9,12 @@ function FormatOutput(props) {
     } else if (props.outputFrequency === 12) {
         output += 'Months'
     }
-        output += ' left until savings target: '
 
+    if (props.calculatorType === 1) {
+        output += ' left until savings target: ';
+    } else {
+        output += ' left until debt payoff: ';
+    }
         
     if (isNaN(props.periods)) {
         output += props.periods;

@@ -91,26 +91,6 @@ class TargetCalculator extends React.Component {
       this.setState({[param]: parseFloat(event.target.value)});
       event.preventDefault();
     }
-  
-    /* moved to own function
-    formatOutput(outputFrequency, periods) {
-      
-      let output = '';
-      if (outputFrequency === 1) {
-        output += 'Years'
-      } else if (outputFrequency === 12) {
-        output += 'Months'
-      }
-      output += ' left until savings target: '
-  
-      
-      if (isNaN(periods)) {
-        output += periods;
-      } else {
-        output += periods;//Math.round(periods*(outputFrequency/frequency)*10) / 10;
-      }
-      return output;
-    }*/
     
     handleSubmit(event) {
       let new_periods = this.periodsToTarget(
@@ -132,7 +112,11 @@ class TargetCalculator extends React.Component {
         alert("balance" + data.val().balance)
       });*/
       
-      let new_output = FormatOutput({outputFrequency: this.state.outputFrequency, periods: new_periods.fourth})
+      let new_output = FormatOutput(
+        {outputFrequency: this.state.outputFrequency, 
+        periods: new_periods.fourth,
+        calculatorType: 1});
+      
       this.setState({periods:new_periods, output: new_output});
       event.preventDefault();  
     }
@@ -205,9 +189,7 @@ class TargetCalculator extends React.Component {
           <Button type="submit" variant="contained" color="primary">Calculate</Button><p></p>
           </form>
         
-        <p class="output">
-        {this.state.output}
-        </p>
+        <p class="output">{this.state.output}</p>
         <TabularResults periods = {this.state.periods}/>
       </div>);
     }  
@@ -216,8 +198,8 @@ class TargetCalculator extends React.Component {
   
   //returns savings target results as a table
   function TabularResults(props) {
-    //hide table unless periods hav ebeen calculated
-    if (props.periods.first === -1) {
+    //hide table unless periods have been calculated
+    if (props.periods.first < 0) {
       return null;
     }
     return(
