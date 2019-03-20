@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import './App.css';
 import ReactDOM from 'react-dom';
-import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
-import firebase from './firebase.js';
+//import firebase from './firebase.js';
 import LoanCalculator from './LoanCalculator.js'
 import TargetCalculator from './TargetCalculator.js'
 
@@ -19,7 +17,7 @@ Calculator wrapper class calls classes for both calculator types */
 class Calculator extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {calculatorType: 2};
+    this.state = {calculatorType: 1};
     this.updateState = this.updateState.bind(this);
   }
 
@@ -66,7 +64,8 @@ class Calculator extends React.Component {
           {calculator}
         </div>
         </CardActions>
-      </Card>);
+      </Card>
+    );
   }
 }
 
@@ -74,30 +73,5 @@ ReactDOM.render(
   <Calculator />,
   document.getElementById('root')
 );
-
-/*const styles = theme => ({
-  card: {
-    maxWidth: 400,
-  },
-  media: {
-    height: 0,
-    paddingTop: '56.25%', // 16:9
-  },
-  actions: {
-    display: 'flex',
-  },
-  expand: {
-    transform: 'rotate(0deg)',
-    marginLeft: 'auto',
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: 'rotate(180deg)',
-  },
-});*/
-
-//export default withStyles(styles)(Calculator);
 
 export default Calculator;

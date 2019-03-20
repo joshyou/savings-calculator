@@ -19,7 +19,7 @@ function FormatOutput(props) {
     if (isNaN(props.periods)) {
         output += props.periods;
     } else {
-        output += props.periods;//Math.round(periods*(outputFrequency/frequency)*10) / 10;
+        output += props.periods;
     }
     return output;
     

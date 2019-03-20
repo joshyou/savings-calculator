@@ -4,8 +4,9 @@ import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import firebase from './firebase.js';
+//import firebase from './firebase.js';
 import FormatOutput from './FormatOutput.js';
+import {periodsToTarget, payoffTime} from './calculate.js';
 
 //inputs: loan balance, APR, compound period (default monthly), (minimum) payment
 //output - time until loan paid off. also interest paid?
@@ -36,37 +37,8 @@ class LoanCalculator extends React.Component {
       event.preventDefault();
     }
   
-    //it looks like credit card interest is usually reported as APR not APY. APR is just monthly interest * 12 (if it's monthly)
-    //APY takes into effect compounding. So just divide APR by 12 to get the monthly interest rate.
-    payoffTime(balance, interest, payment, minpayment, snowball, outputFrequency) {
-      //alert(snowball);
-      let periods = 0;
-      interest = 1 + 0.01*(interest/12); //assume monthly payment and APR interest for now
-      if (payment <= 0) {
-        return "forever";
-      }
-      //track cumulative payments in excess of minimum payments
-      let excess = 0;
-      while (balance > 0) {
-        excess += (payment - minpayment);
-        balance -= payment;
-        if (snowball) {
-          //subtract interest savings from excess payments
-          balance -= ((interest - 1) * excess);
-        }
-        
-        balance *= interest;
-        if (periods > 10000) {
-          return "forever";
-        }
-        periods += 1;
-      }
-      //alert(periods);
-      return Math.round(periods*(outputFrequency/12)*10) / 10;
-    }
-  
     handleSubmit(event) {
-      let new_periods = this.payoffTime(
+      let new_periods = payoffTime(
         this.state.balance, 
         this.state.interest,
         this.state.payment,

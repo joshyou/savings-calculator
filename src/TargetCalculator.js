@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { withStyles } from '@material-ui/core/styles';
-import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
+//import { withStyles } from '@material-ui/core/styles';
+//import Card from '@material-ui/core/Card';
+//import CardActions from '@material-ui/core/CardActions';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -19,11 +19,13 @@ import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import firebase from './firebase.js';
 import FormatOutput from './FormatOutput.js';
+import {periodsToTarget, payoffTime} from './calculate.js';
 
 class TargetCalculator extends React.Component {
     constructor(props) {
       super(props);
-      this.state = {target: 100000, 
+      this.state = {username: 'Jim',
+                  target: 100000, 
                   amount: 1000, 
                   interest: 5, 
                   principal: 0,
@@ -41,8 +43,8 @@ class TargetCalculator extends React.Component {
       this.setState({ show: nextProps.show });  
     }*/
     
-    //compute periods until savings target is reached. periods is years, months, 2-weeks, or weeks, based
-    //on selected contribution frequency. 
+    
+    /*
     periodsToTarget(target, principal, amount, interest, frequency, outputFrequency) {
       //alert("frequency" + frequency);
   
@@ -85,7 +87,7 @@ class TargetCalculator extends React.Component {
       }
       results.fourth = Math.round(periods*(outputFrequency/frequency)*10) / 10;
       return results
-    }
+    }*/
     
     updateState(param, event) {
       this.setState({[param]: parseFloat(event.target.value)});
@@ -93,7 +95,7 @@ class TargetCalculator extends React.Component {
     }
     
     handleSubmit(event) {
-      let new_periods = this.periodsToTarget(
+      let new_periods = periodsToTarget(
         this.state.target, 
         this.state.principal, 
         this.state.amount, 
@@ -118,11 +120,18 @@ class TargetCalculator extends React.Component {
         calculatorType: 1});
       
       this.setState({periods:new_periods, output: new_output});
+
+      firebase.database().ref('account/' + this.state.username).set({
+        balance:this.state.principal,
+        target: this.state.target,
+        interest: this.state.interest
+      });
       event.preventDefault();  
     }
     
+    //prefill values from firebase
     componentDidMount() {
-      firebase.database().ref('account/Jim').once('value', (data) => {
+      firebase.database().ref('account/'+ this.state.username).once('value', (data) => {
         this.setState({principal: data.val().balance,
                       target: data.val().target,
                       interest: data.val().interest});
