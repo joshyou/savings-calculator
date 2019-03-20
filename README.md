@@ -2,8 +2,6 @@
 
 Built using React and Material UI frameworks. Main source code is located in src/App.js.
 
-Two options: 
+Savings calculator - calculate time left until savings goal is reached. Takes principal, contribution amount, contribution frequency, interest rate, and savings target as inputs. Can display in months or years. Integrated with Firebase to provide a cloud-based savings solution!!!
 
-Savings calculator - calculate time left until savings goal is reached.
-
-Loan payoff calculator - calculate time left until loan is paid off.
+Loan payoff calculator - calculate time left until loan is paid off. Takes balance, APR, and monthly payment as inputs.
