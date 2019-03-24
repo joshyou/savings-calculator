@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/joshyou/savings-calculator/static/css/main.d0a1c865.chunk.css"
   },
   {
-    "revision": "9b61e72540959fc96f76fe5bdc5cc41d",
+    "revision": "7dd1a87cb2cdd72fe173a406f1f7941d",
     "url": "/joshyou/savings-calculator/index.html"
   }
 ];
