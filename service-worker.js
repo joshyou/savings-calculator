@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/joshyou/savings-calculator/precache-manifest.72344fed71e367cabffcd401e71f0750.js"
+  "/joshyou/savings-calculator/precache-manifest.d716032593dbfc5b6af03756993cd1ba.js"
 );
 
 workbox.clientsClaim();
