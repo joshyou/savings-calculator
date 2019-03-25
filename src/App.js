@@ -11,6 +11,14 @@ import LoanCalculator from './LoanCalculator.js'
 import TargetCalculator from './TargetCalculator.js'
 
 /* 
+to do:
+
+username input (separate section - menu?). allow adding usernames to store info
+dialog to explain snowball input
+dialog to explain compound interest calculation
+add tests
+loading animation
+
 two calculator options - time until savings target, time until loan is paid off
 Calculator wrapper class calls classes for both calculator types */
 
@@ -38,7 +46,7 @@ class Calculator extends React.Component {
     return (
       <Card style={{
         width: '55%',
-        maxWidth: this.state.calculatorType === 1 ? 650:500,
+        maxWidth: this.state.calculatorType === 1 ? 550:500,
         margin: 'auto',
         padding: '20px',
         backgroundColor: '#eff0f4',
