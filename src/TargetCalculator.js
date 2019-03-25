@@ -20,6 +20,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import firebase from './firebase.js';
 import FormatOutput from './FormatOutput.js';
 import {periodsToTarget, payoffTime} from './calculate.js';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import Tooltip from '@material-ui/core/Tooltip';
 
 class TargetCalculator extends React.Component {
     constructor(props) {
@@ -135,7 +137,11 @@ class TargetCalculator extends React.Component {
             onChange={this.updateState.bind(this, "interest")}
             style={{width:'40px'}}
             />
-            &nbsp;%
+            &nbsp;%&nbsp;&nbsp;
+            <Tooltip title={"Annualized return on savings. Savings are compounded based on contribution frequency"
+            +" but calculated so that savings grow at the inputted rate."}>
+              <InfoOutlinedIcon className="vertical-align-middle"/>
+            </Tooltip>
             </label>
           <p></p>
             <FormControl>
@@ -152,7 +158,6 @@ class TargetCalculator extends React.Component {
           <p></p>
           <Button type="submit" variant="contained" color="primary">Calculate</Button><p></p>
           </form>
-        
         <p class="output">{this.state.output}</p>
         <TabularResults periods = {this.state.periods}/>
       </div>);
@@ -171,7 +176,7 @@ class TargetCalculator extends React.Component {
         <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
         Detailed results</ExpansionPanelSummary>
         <ExpansionPanelDetails>
-            <Table style={{tableLayout:'auto'}}>
+            <Table>
               <colgroup>
               <col/>
               <col/>
@@ -181,11 +186,11 @@ class TargetCalculator extends React.Component {
               </colgroup>
               <TableHead>
                 <TableRow>
-                  <TableCell style={{maxWidth:"14px"}}>Percentage of target</TableCell>
-                  <TableCell style={{maxWidth:"7px"}}>25%</TableCell>
-                  <TableCell style={{maxWidth:"6px"}} align="right">50%</TableCell>
-                  <TableCell style={{maxWidth:"6px"}} align="right">75%</TableCell>
-                  <TableCell style={{maxWidth:"6px"}} align="right">100%</TableCell>
+                  <TableCell style={{maxWidth:"50px"}}>Percentage of target</TableCell>
+                  <TableCell>25%</TableCell>
+                  <TableCell>50%</TableCell>
+                  <TableCell>75%</TableCell>
+                  <TableCell>100%</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>

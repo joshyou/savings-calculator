@@ -7,6 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 //import firebase from './firebase.js';
 import FormatOutput from './FormatOutput.js';
 import {periodsToTarget, payoffTime} from './calculate.js';
+import Tooltip from '@material-ui/core/Tooltip';
 
 //inputs: loan balance, APR, compound period (default monthly), (minimum) payment
 //output - time until loan paid off. also interest paid?
@@ -83,12 +84,14 @@ class LoanCalculator extends React.Component {
               onChange={this.updateState.bind(this, "minpayment")}
               style={{width:'60px'}}/>
             </label>
+            <Tooltip title="Apply interest savings from excess payments as extra payments">
             <label>
               &nbsp;Snowball&nbsp; 
               <input type="checkbox" checked={this.state.snowball} 
               onChange={this.updateCheck.bind(this)}
               />
             </label>
+            </Tooltip>
             <p></p>
             <label>
               APR:&nbsp; 

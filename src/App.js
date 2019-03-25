@@ -14,7 +14,6 @@ import TargetCalculator from './TargetCalculator.js'
 to do:
 
 username input (separate section - menu?). allow adding usernames to store info
-dialog to explain snowball input
 dialog to explain compound interest calculation
 add tests
 loading animation
@@ -46,7 +45,7 @@ class Calculator extends React.Component {
     return (
       <Card style={{
         width: '55%',
-        maxWidth: this.state.calculatorType === 1 ? 550:500,
+        maxWidth: this.state.calculatorType === 1 ? 570:500,
         margin: 'auto',
         padding: '20px',
         backgroundColor: '#eff0f4',
