@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 //import ReactDOM from 'react-dom';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
@@ -14,8 +14,8 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import FormatOutput from './FormatOutput.js';
-import {periodsToTarget, payoffTime} from './calculate.js';
+import formatOutput from '../Helpers/formatOutput.js';
+import {periodsToTarget, payoffTime} from '../Helpers/calculate.js';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
 
@@ -35,12 +35,6 @@ class TargetCalculator extends React.Component {
       this.handleSubmit = this.handleSubmit.bind(this);
       
     }
-  
-    //removed - deprecated. child calculators no longer use props to determine whether to show
-    /*componentWillReceiveProps(nextProps) {
-      this.setState({ show: nextProps.show });  
-    }*/
-    
     
     updateState(param, event) {
       this.setState({[param]: parseFloat(event.target.value)});
@@ -57,10 +51,10 @@ class TargetCalculator extends React.Component {
         this.state.outputFrequency);
     
       
-      let new_output = FormatOutput(
-        {outputFrequency: this.state.outputFrequency, 
-        periods: new_periods.fourth,
-        calculatorType: 1});
+      let new_output = formatOutput(
+        this.state.outputFrequency, 
+        new_periods.fourth,
+        'Target');
       
       this.setState({periods:new_periods, output: new_output});
       event.preventDefault();  

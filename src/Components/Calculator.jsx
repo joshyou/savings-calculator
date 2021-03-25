@@ -9,7 +9,7 @@ import LoanCalculator from './LoanCalculator.js'
 import TargetCalculator from './TargetCalculator.js'
 
 /* 
-Two calculator options - time until savings target, time until loan is paid off
+Two calculator options: time until savings target, time until loan is paid off
 */
 
 const Calculator = () => {

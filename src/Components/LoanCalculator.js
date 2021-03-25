@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import './App.css';
+import '../App.css';
 import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import FormatOutput from './FormatOutput.js';
-import {periodsToTarget, payoffTime} from './calculate.js';
+import formatOutput from '../Helpers/formatOutput.js';
+import {periodsToTarget, payoffTime} from '../Helpers/calculate.js';
 import Tooltip from '@material-ui/core/Tooltip';
 
 //inputs: loan balance, APR, compound period (default monthly), (minimum) payment
@@ -46,10 +46,10 @@ class LoanCalculator extends React.Component {
         this.state.snowball,
         this.state.outputFrequency);
 
-      let new_output = FormatOutput(
-        {outputFrequency: this.state.outputFrequency, 
-        periods: new_periods, 
-        calculatorType: 2})
+      let new_output = formatOutput(
+        this.state.outputFrequency, 
+        new_periods, 
+        'Loan')
 
       this.setState({periods:new_periods, output: new_output});
       event.preventDefault();
