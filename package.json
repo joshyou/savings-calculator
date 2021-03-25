@@ -2,7 +2,7 @@
   "name": "savings-calculator",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://joshyou.github.io/savings-calculator",
+  "homepage": "https://github.com/joshyou/savings-calculator#readme",
   "dependencies": {
     "@material-ui/core": "^3.9.2",
     "@material-ui/icons": "^3.0.2",
@@ -10,7 +10,7 @@
     "material-design-icons": "^3.0.1",
     "react": "^16.8.1",
     "react-dom": "^16.8.1",
-    "react-scripts": "2.1.5"
+    "react-scripts": "^2.1.5"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -40,6 +40,5 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/joshyou/savings-calculator/issues"
-  },
-  "homepage": "https://github.com/joshyou/savings-calculator#readme"
+  }
 }

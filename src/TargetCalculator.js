@@ -5,9 +5,6 @@ import Button from '@material-ui/core/Button';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-//import { withStyles } from '@material-ui/core/styles';
-//import Card from '@material-ui/core/Card';
-//import CardActions from '@material-ui/core/CardActions';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -17,7 +14,6 @@ import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import firebase from './firebase.js';
 import FormatOutput from './FormatOutput.js';
 import {periodsToTarget, payoffTime} from './calculate.js';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
@@ -60,16 +56,6 @@ class TargetCalculator extends React.Component {
         this.state.frequency,
         this.state.outputFrequency);
     
-      /*
-      test code for setting and reading firebase values
-  
-      firebase.database().ref('account/Jim').set({
-        balance:10010
-      });
-  
-      firebase.database().ref('account/Jim').once('value', function(data) {
-        alert("balance" + data.val().balance)
-      });*/
       
       let new_output = FormatOutput(
         {outputFrequency: this.state.outputFrequency, 
@@ -77,23 +63,10 @@ class TargetCalculator extends React.Component {
         calculatorType: 1});
       
       this.setState({periods:new_periods, output: new_output});
-
-      firebase.database().ref('account/' + this.state.username).set({
-        balance:this.state.principal,
-        target: this.state.target,
-        interest: this.state.interest
-      });
       event.preventDefault();  
     }
     
-    //prefill values from firebase
-    componentDidMount() {
-      firebase.database().ref('account/'+ this.state.username).once('value', (data) => {
-        this.setState({principal: data.val().balance,
-                      target: data.val().target,
-                      interest: data.val().interest});
-      });    
-    }
+
     render() {
       return (
       <div>
